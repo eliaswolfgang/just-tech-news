@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const passport = require('../config/passport');
+
 const { User, Post, Vote, Comment } = require('../../models');
 
 router.get('/', (req, res) => {
@@ -65,7 +67,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', passport.authenticate('local'), (req, res) => {
   User.findOne({
     where: {
       email: req.body.email,
