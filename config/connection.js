@@ -3,7 +3,7 @@ require('dotenv').config();
 
 let sequelize;
 
-if (process.env.JAWSDB_URL) {
+if (process.env.NODE_ENV === "production") {
   sequelize = new Sequelize(
     process.env.JAWS_DB,
     process.env.JAWS_USER,
