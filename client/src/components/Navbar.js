@@ -5,11 +5,31 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../utils/UserContext';
 
 export const NavBar = () => {
-  const { state } = useUserContext();
-  const user = { ...state[0]?.user };
+  const user = JSON.parse(sessionStorage.getItem('user')) ?? null;
+  const { dispatch } = useUserContext();
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
+  const handleLogoutClick = () => {
+    dispatch({
+      type: 'logout',
+      payload: {
+        username: '',
+        email: '',
+        loggedIn: false,
+      },
+    });
+    sessionStorage.clear('user');
+    navigate('/');
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position='static'>
@@ -25,10 +45,20 @@ export const NavBar = () => {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
+          <Typography
+            variant='h6'
+            component='div'
+            sx={{ flexGrow: 1 }}
+            onClick={() => navigate('/')}
+          >
             Just Tech News
           </Typography>
-          <Button color='inherit'>
+          <Button
+            color='inherit'
+            onClick={
+              user && user.loggedIn ? handleLogoutClick : handleLoginClick
+            }
+          >
             {user && user.loggedIn ? 'Logout' : 'Login'}
           </Button>
         </Toolbar>
