@@ -1,7 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react';
 
 const UserContext = createContext({
-  user: {},
+  user: JSON.parse(sessionStorage.getItem('user')) ?? {},
 });
 const { Provider } = UserContext;
 
@@ -10,7 +10,7 @@ const userReducer = (state, action) => {
     case 'setCurrentUser':
       return [...state, { user: action.payload }];
     case 'logout':
-      return [...state, { user: action.payload }];
+      return state = action.payload;
     default:
       return state;
   }

@@ -45,11 +45,12 @@ export const Login = () => {
         userDispatch({
           type: 'setCurrentUser',
           payload: {
-            username: res.data.username,
-            email: res.data.email,
+            username: res.data.user.username,
+            email: res.data.user.email,
             loggedIn: true,
           },
         });
+
         sessionStorage.setItem(
           'user',
           JSON.stringify({
@@ -65,20 +66,21 @@ export const Login = () => {
           console.log(err);
           setErrorProps({
             open: true,
-            message: `${err.message}`,
+            message: `Well, this is embarrassing... There was an issue signing you in. Please try again later.`,
           });
         }
       });
   };
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const { dispatch: userDispatch } = useUserContext();
   const [errorProps, setErrorProps] = useState({
     open: false,
     setOpen: null,
     message: '',
   });
-  const { dispatch: userDispatch } = useUserContext();
   const navigate = useNavigate();
 
   return (
