@@ -12,7 +12,7 @@ import { useUserContext } from '../utils/UserContext';
 
 export const NavBar = () => {
   const { state, dispatch } = useUserContext();
-  const { user } = state[0] ?? {};
+  const { user } = state;
   const [showSideNav, setShowSideNav] = useState(false);
   const navigate = useNavigate();
 
