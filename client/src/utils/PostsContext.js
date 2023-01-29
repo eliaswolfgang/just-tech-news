@@ -1,54 +1,20 @@
-import React, {
-  createContext,
-  useReducer,
-  useContext,
-  useEffect,
-  useCallback,
-} from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import API from './API';
 
-const PostsContext = createContext({
-  posts: [],
-});
+const PostsContext = createContext({});
 const { Provider } = PostsContext;
 
-const postsReducer = (state, action) => {
-  switch (action.type) {
-    case 'setPosts':
-      state.posts = action.payload;
-      return state;
-    case 'updatePost':
-      const updatedPost = state.posts.find(
-        (p) => p.id === action.payload.postID
-      );
-      state.posts.splice(
-        state.posts.indexOf(updatedPost),
-        1,
-        action.payload.updatedPost
-      );
-      return state;
-    default:
-      return state;
-  }
-};
-
-const PostsProvider = ({ value = {}, ...props }) => {
-  const [state, dispatch] = useReducer(postsReducer, { posts: [] });
-  const getPosts = useCallback(() => {
-    API.getAllPosts()
-      .then((res) => {
-        dispatch({
-          type: 'setPosts',
-          payload: res.data,
-        });
-      })
-      .catch((err) => console.log(err));
-  }, []);
+const PostsProvider = ({ ...props }) => {
+  const [posts, setPosts] = useState([]);
   useEffect(() => {
+    const getPosts = async () => {
+      const allPosts = await API.getAllPosts();
+      setPosts(allPosts.data);
+    };
     getPosts();
-  }, [getPosts]);
+  }, []);
 
-  return <Provider value={{ state, dispatch }} {...props} />;
+  return <Provider value={{ posts, setPosts }} {...props} />;
 };
 
 const usePostsContext = () => useContext(PostsContext);

@@ -8,18 +8,15 @@ export const Landing = () => {
     state: { user },
   } = useUserContext();
 
-  const {
-    state: { posts },
-  } = usePostsContext();
+  const { posts, setPosts } = usePostsContext();
 
   return (
     <>
       {user && (
         <>
-          <NewPost />
-          <div>
-            {posts && posts.map((post) => <Post key={post.id} post={post} />)}
-          </div>
+          <NewPost setPosts={setPosts} />
+          {!!posts.length &&
+            posts.map((post) => <Post key={post.id} post={post} />)}
         </>
       )}
     </>

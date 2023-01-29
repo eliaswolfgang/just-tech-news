@@ -13,6 +13,16 @@ import {
 import ErrorToast from '../components/ErrorToast';
 
 export const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const { dispatch: userDispatch } = useUserContext();
+  const [errorProps, setErrorProps] = useState({
+    open: false,
+    setOpen: null,
+    message: '',
+  });
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     setSubmitted(true);
@@ -48,6 +58,7 @@ export const Login = () => {
             username: res.data.user.username,
             email: res.data.user.email,
             loggedIn: true,
+            id: res.data.user.id,
           },
         });
 
@@ -57,6 +68,7 @@ export const Login = () => {
             username: res.data.user.username,
             email: res.data.user.email,
             loggedIn: true,
+            id: res.data.user.id,
           })
         );
         navigate('/home');
@@ -71,17 +83,6 @@ export const Login = () => {
         }
       });
   };
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const { dispatch: userDispatch } = useUserContext();
-  const [errorProps, setErrorProps] = useState({
-    open: false,
-    setOpen: null,
-    message: '',
-  });
-  const navigate = useNavigate();
 
   return (
     <>

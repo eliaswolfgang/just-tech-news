@@ -4,9 +4,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import TextField from '@mui/material/TextField';
 import { useUserContext } from '../utils/UserContext';
-// import API from '../utils/API';
+import CardActions from '@mui/material/CardActions';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import API from '../utils/API';
 
-export const NewPost = () => {
+export const NewPost = ({ setPosts }) => {
   const {
     state: { user },
   } = useUserContext();
@@ -15,6 +17,9 @@ export const NewPost = () => {
     switch (action.type) {
       case 'fieldSet':
         return { ...state, [action.field]: action.payload };
+      case 'reset':
+        state = { title: '', post_url: '' };
+        return state;
       default:
         return state;
     }
@@ -24,6 +29,7 @@ export const NewPost = () => {
     title: '',
     post_url: '',
   });
+
   return (
     <Card style={{ width: '50%', margin: '1rem' }}>
       <CardHeader title={`What's up, ${user.username}?`} />
@@ -55,6 +61,24 @@ export const NewPost = () => {
             });
           }}
         />
+        <CardActions>
+          <AddCircleIcon
+            onClick={() => {
+              API.createPost({
+                title: newPostState.title,
+                post_url: newPostState.post_url ?? null,
+                user_id: user.id,
+              })
+                .then(async (res) => {
+                  setPosts((prev) => [res.data, ...prev]);
+                  newPostDispatch({
+                    type: 'reset',
+                  });
+                })
+                .catch((err) => console.log(err));
+            }}
+          />
+        </CardActions>
       </CardContent>
     </Card>
   );

@@ -8,7 +8,8 @@ const { Provider } = UserContext;
 const userReducer = (state, action) => {
   switch (action.type) {
     case 'setCurrentUser':
-      return { ...state, user: action.payload };
+      state.user = action.payload;
+      return state;
     case 'logout':
       return (state = action.payload);
     default:

@@ -11,9 +11,11 @@ export const Post = ({ post }) => {
   return (
     <Card style={{ width: '50%', margin: '1rem' }}>
       <CardHeader title={post.title} />
-      <Typography sx={{ m: 0.5, pl: 2 }} color='text.secondary'>
-        Posted by {post.user.username}
-      </Typography>
+      {post?.user?.username && (
+        <Typography sx={{ m: 0.5, pl: 2 }} color='text.secondary'>
+          Posted by {post.user.username}
+        </Typography>
+      )}
       <CardContent>
         <a href={post.post_url} rel='noreferrer' target='_blank'>
           {post.post_url}
