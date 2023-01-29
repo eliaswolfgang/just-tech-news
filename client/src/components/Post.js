@@ -1,3 +1,4 @@
+import CardHeader from '@mui/material/CardHeader';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -7,7 +8,7 @@ export const Post = ({ post }) => {
     <Box style={{ width: '60%' }}>
       <Card variant='outlined'>
         <CardContent>
-          <h2>{post.title}</h2>
+          <CardHeader>{post.title}</CardHeader>
           <p>{post.post_url}</p>
         </CardContent>
       </Card>
