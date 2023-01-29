@@ -10,7 +10,7 @@ import {
   TextField,
   Container,
 } from '@mui/material';
-import ErrorToast from './ErrorToast';
+import ErrorToast from '../components/ErrorToast';
 
 export const Signup = () => {
   const initialSignUpState = {
@@ -63,6 +63,14 @@ export const Signup = () => {
             loggedIn: true,
           },
         });
+        sessionStorage.setItem(
+          'user',
+          JSON.stringify({
+            username: res.data.username,
+            email: res.data.email,
+            loggedIn: true,
+          })
+        );
         navigate('/home');
       })
       .catch((err) => {
@@ -111,6 +119,7 @@ export const Signup = () => {
                 onChange={(e) => updateForm(e, 'email')}
                 label='Email'
                 variant='filled'
+                type='email'
                 value={state.email}
                 error={submitted && !state.email}
                 required
