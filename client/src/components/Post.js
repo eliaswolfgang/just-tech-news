@@ -1,9 +1,17 @@
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+
 export const Post = ({ post }) => {
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <p>{post.post_url}</p>
-    </div>
+    <Box minWidth={275}>
+      <Card variant='outlined'>
+        <CardContent>
+          <h2>{post.title}</h2>
+          <p>{post.post_url}</p>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
