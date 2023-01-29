@@ -9,7 +9,7 @@ export const Post = ({ post }) => {
       <Card variant='outlined'>
         <CardContent>
           <CardHeader>{post.title}</CardHeader>
-          <p>{post.post_url}</p>
+          <a href={post.post_url}>{post.post_url} target='_blank'</a>
         </CardContent>
       </Card>
     </Box>
