@@ -1,4 +1,10 @@
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useReducer,
+  useContext,
+  useEffect,
+  useCallback,
+} from 'react';
 import API from './API';
 
 const PostsContext = createContext({
@@ -9,7 +15,7 @@ const { Provider } = PostsContext;
 const postsReducer = (state, action) => {
   switch (action.type) {
     case 'setPosts':
-      state.posts = action.payload
+      state.posts = action.payload;
       return state;
     case 'updatePost':
       const updatedPost = state.posts.find(
@@ -28,7 +34,7 @@ const postsReducer = (state, action) => {
 
 const PostsProvider = ({ value = {}, ...props }) => {
   const [state, dispatch] = useReducer(postsReducer, { posts: [] });
-  useEffect(() => {
+  const getPosts = useCallback(() => {
     API.getAllPosts()
       .then((res) => {
         dispatch({
@@ -37,7 +43,10 @@ const PostsProvider = ({ value = {}, ...props }) => {
         });
       })
       .catch((err) => console.log(err));
-  }, [dispatch]);
+  }, []);
+  useEffect(() => {
+    getPosts();
+  }, [getPosts]);
 
   return <Provider value={{ state, dispatch }} {...props} />;
 };

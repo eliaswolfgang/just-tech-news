@@ -1,6 +1,7 @@
 import { useUserContext } from '../utils/UserContext';
 import { usePostsContext } from '../utils/PostsContext';
 import Post from '../components/Post';
+import NewPost from '../components/NewPost';
 
 export const Landing = () => {
   const {
@@ -13,12 +14,14 @@ export const Landing = () => {
 
   return (
     <>
-      {user && <div>This will be the landing page for {user.username}</div>}
-      <div>
-        {posts.map((post) => (
-          <Post key={post.id} post={post} />
-        ))}
-      </div>
+      {user && (
+        <>
+          <NewPost />
+          <div>
+            {posts && posts.map((post) => <Post key={post.id} post={post} />)}
+          </div>
+        </>
+      )}
     </>
   );
 };
