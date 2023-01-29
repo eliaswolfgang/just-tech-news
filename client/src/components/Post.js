@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 
 export const Post = ({ post }) => {
   return (
-    <Box minWidth={275}>
+    <Box style={{ width: '60%' }}>
       <Card variant='outlined'>
         <CardContent>
           <h2>{post.title}</h2>
