@@ -40,11 +40,6 @@ Post.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    content: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: null,
-    },
     post_url: {
       type: DataTypes.STRING,
       allowNull: true,
