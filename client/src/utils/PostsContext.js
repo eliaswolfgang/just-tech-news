@@ -6,15 +6,18 @@ const { Provider } = PostsContext;
 
 const PostsProvider = ({ ...props }) => {
   const [posts, setPosts] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   useEffect(() => {
     const getPosts = async () => {
       const allPosts = await API.getAllPosts();
       setPosts(allPosts.data);
     };
     getPosts();
-  }, []);
+  }, [refresh]);
 
-  return <Provider value={{ posts, setPosts }} {...props} />;
+  return (
+    <Provider value={{ posts, setPosts, refresh, setRefresh }} {...props} />
+  );
 };
 
 const usePostsContext = () => useContext(PostsContext);

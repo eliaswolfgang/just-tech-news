@@ -59,6 +59,7 @@ export const Signup = () => {
           type: 'setCurrentUser',
           payload: {
             username: res.data.username,
+            id: res.data.id,
             email: res.data.email,
             loggedIn: true,
           },
@@ -66,6 +67,7 @@ export const Signup = () => {
         sessionStorage.setItem(
           'user',
           JSON.stringify({
+            id: res.data.id,
             username: res.data.username,
             email: res.data.email,
             loggedIn: true,
