@@ -6,6 +6,26 @@ const { User, Post, Vote, Comment } = require('../../models');
 router.get('/', (req, res) => {
   User.findAll({
     attributes: { exclude: ['password'] },
+    include: [
+      {
+        model: Post,
+        attributes: ['id', 'title', 'post_url', 'createdAt'],
+      },
+      {
+        model: Comment,
+        attributes: ['id', 'comment_text', 'createdAt'],
+        include: {
+          model: Post,
+          attributes: ['title'],
+        },
+      },
+      {
+        model: Post,
+        attributes: ['title'],
+        through: Vote,
+        as: 'voted_posts',
+      },
+    ],
   })
     .then((data) => res.json(data))
     .catch((err) => {
@@ -23,23 +43,23 @@ router.get('/:id', (req, res) => {
     include: [
       {
         model: Post,
-        attributes: ['id', 'title', 'post_url', 'created_at']
+        attributes: ['id', 'title', 'post_url', 'createdAt'],
       },
       {
         model: Comment,
-        attributes: ['id', 'comment_text', 'created_at'],
+        attributes: ['id', 'comment_text', 'createdAt'],
         include: {
           model: Post,
-          attributes: ['title']
-        }
+          attributes: ['title'],
+        },
       },
       {
         model: Post,
         attributes: ['title'],
         through: Vote,
-        as: 'voted_posts'
-      }
-    ]
+        as: 'voted_posts',
+      },
+    ],
   })
     .then((data) => {
       if (!data) {

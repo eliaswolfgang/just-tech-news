@@ -11,10 +11,13 @@ import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Divider from '@mui/material/Divider';
-import API from '../utils/API';
+// import API from '../utils/API';
 import { useUserContext } from '../utils/UserContext';
 import { DateFilter } from '../utils/Functions';
 import ErrorToast from './ErrorToast';
+import { useMutation } from '@apollo/client';
+import { createNewComment, upvotePost } from '../utils/mutations';
+import { getAllPosts } from '../utils/queries';
 
 export const Post = ({ post, refresh, setRefresh }) => {
   const {
@@ -24,6 +27,8 @@ export const Post = ({ post, refresh, setRefresh }) => {
     [post.id]: { open: false, comment: '' },
   });
   const [error, setError] = useState({ show: false, message: '' });
+  const [createComment] = useMutation(createNewComment);
+  const [upvote] = useMutation(upvotePost);
   const submitComment = async () => {
     if (!commentMode[post.id].comment) return;
     try {
@@ -32,9 +37,13 @@ export const Post = ({ post, refresh, setRefresh }) => {
         post_id: post.id,
         comment_text: commentMode[post.id].comment,
       };
-      const response = await API.createComment(commentData);
-      console.log(response);
-      if (response.data.id) {
+      const { data } = await createComment({
+        variables: { ...commentData },
+        refetchQueries: [{ query: getAllPosts }, 'getAllPosts'],
+      });
+      // const response = await API.createComment(commentData);
+      // console.log(response);
+      if (data) {
         setRefresh(!refresh);
         setCommentMode((prev) => ({
           ...prev,
@@ -48,12 +57,21 @@ export const Post = ({ post, refresh, setRefresh }) => {
   };
   const submitUpvote = async () => {
     try {
-      const upvoteData = {
-        user_id: user.id,
-        post_id: post.id,
-      };
-      const response = await API.upvotePost(upvoteData);
-      if (response.data.id) {
+      const { data } = await upvote({
+        variables: {
+          user_id: user.id,
+          post_id: post.id,
+        },
+        refetchQueries: [{ query: getAllPosts }, 'getAllPosts'],
+      });
+      if (data) {
+        if (!data.upvote) {
+          setError({
+            show: true,
+            message: 'You have already upvoted this post',
+          });
+          return;
+        }
         setCommentMode((prev) => ({
           ...prev,
           [post.id]: { open: true, comment: '' },
@@ -71,7 +89,7 @@ export const Post = ({ post, refresh, setRefresh }) => {
         <CardHeader title={post.title} />
         {post?.user?.username && (
           <Typography sx={{ m: 0.5, pl: 2 }} color='text.secondary'>
-            Posted by {post.user.username} on {DateFilter(post.created_at)}
+            Posted by {post.user.username} on {DateFilter(post.createdAt)}
           </Typography>
         )}
         <CardContent>
@@ -83,9 +101,9 @@ export const Post = ({ post, refresh, setRefresh }) => {
             <IconButton aria-label='like' onClick={submitUpvote}>
               <FavoriteIcon />
             </IconButton>
-            {!!post.vote_count && (
+            {!!post.votes?.length && (
               <Typography variant='body2' color='text.secondary'>
-                {post.vote_count} {post.vote_count === 1 ? 'like' : 'likes'}
+                {post.votes.length} {post.votes.length === 1 ? 'like' : 'likes'}
               </Typography>
             )}
             <IconButton
@@ -124,7 +142,7 @@ export const Post = ({ post, refresh, setRefresh }) => {
                       style={{ float: 'right' }}
                     >
                       Commented by {comment.user?.username} on{' '}
-                      {DateFilter(comment.created_at)}
+                      {DateFilter(comment.createdAt)}
                     </Typography>
                   </Box>
                 </React.Fragment>

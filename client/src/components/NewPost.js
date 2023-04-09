@@ -6,14 +6,17 @@ import TextField from '@mui/material/TextField';
 import { useUserContext } from '../utils/UserContext';
 import CardActions from '@mui/material/CardActions';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import API from '../utils/API';
+// import API from '../utils/API';
 import ErrorToast from './ErrorToast';
+import { useMutation } from '@apollo/client';
+import { createNewPost } from '../utils/mutations';
+import { getAllPosts } from '../utils/queries';
 
 export const NewPost = ({ refresh, setRefresh }) => {
   const {
     state: { user },
   } = useUserContext();
-
+  const [createPost] = useMutation(createNewPost);
   const newPostReducer = (state, action) => {
     switch (action.type) {
       case 'fieldSet':
@@ -41,18 +44,22 @@ export const NewPost = ({ refresh, setRefresh }) => {
       return;
     }
     setError(false);
-    API.createPost({
-      title: newPostState.title,
-      post_url: newPostState.post_url ?? null,
-      user_id: user.id,
-    })
-      .then(async (res) => {
+    try {
+      const { data } = await createPost({
+        variables: {
+          title: newPostState.title,
+          post_url: newPostState.post_url ?? null,
+          user_id: user.id,
+        },
+        refetchQueries: [{ query: getAllPosts }, 'getAllPosts'],
+      });
+      if (data) {
         setRefresh(!refresh);
-        newPostDispatch({
-          type: 'reset',
-        });
-      })
-      .catch((err) => console.log(err));
+        newPostDispatch({ type: 'reset' });
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

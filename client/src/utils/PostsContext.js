@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import API from './API';
+import { useQuery } from '@apollo/client';
+// import API from './API';
+import { getAllPosts } from './queries';
 
 const PostsContext = createContext({});
 const { Provider } = PostsContext;
@@ -7,13 +9,14 @@ const { Provider } = PostsContext;
 const PostsProvider = ({ ...props }) => {
   const [posts, setPosts] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const { data } = useQuery(getAllPosts);
   useEffect(() => {
-    const getPosts = async () => {
-      const allPosts = await API.getAllPosts();
-      setPosts(allPosts.data);
-    };
-    getPosts();
-  }, [refresh]);
+    if (data?.getPosts?.length) {
+      setPosts(data.getPosts);
+    } else {
+      setPosts([]);
+    }
+  }, [data, refresh]);
 
   return (
     <Provider value={{ posts, setPosts, refresh, setRefresh }} {...props} />

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../utils/UserContext';
-import API from '../utils/API';
+// import API from '../utils/API';
+import { useMutation } from '@apollo/client';
 import {
   Box,
   FormGroup,
@@ -11,11 +12,13 @@ import {
   Container,
 } from '@mui/material';
 import ErrorToast from '../components/ErrorToast';
+import { loginUser } from '../utils/mutations';
 
 export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [login] = useMutation(loginUser);
   const { dispatch: userDispatch } = useUserContext();
   const [errorProps, setErrorProps] = useState({
     open: false,
@@ -33,55 +36,85 @@ export const Login = () => {
       return;
     }
 
-    API.login({ email, password })
-      .then((res) => {
-        if (res.statusCode === 401) {
-          setErrorProps({
-            open: true,
-            message: 'Incorrect email or password',
-          });
-          return;
-        }
-
-        if (res.statusCode === 404) {
-          setErrorProps({
-            open: true,
-            message:
-              'No user with that email address found. Click on Just Tech News to sign up',
-          });
-          return;
-        }
-
-        userDispatch({
-          type: 'setCurrentUser',
-          payload: {
-            username: res.data.user.username,
-            email: res.data.user.email,
-            loggedIn: true,
-            id: res.data.user.id,
-          },
-        });
-
-        sessionStorage.setItem(
-          'user',
-          JSON.stringify({
-            username: res.data.user.username,
-            email: res.data.user.email,
-            loggedIn: true,
-            id: res.data.user.id,
-          })
-        );
-        navigate('/home');
-      })
-      .catch((err) => {
-        if (err) {
-          console.log(err);
-          setErrorProps({
-            open: true,
-            message: `Well, this is embarrassing... There was an issue signing you in. Please try again later.`,
-          });
-        }
+    try {
+      const { data } = await login({ variables: { email, password } });
+      userDispatch({
+        type: 'setCurrentUser',
+        payload: {
+          username: data.login.user.username,
+          email: data.login.user.email,
+          loggedIn: true,
+          id: data.login.user.id,
+        },
       });
+
+      sessionStorage.setItem(
+        'user',
+        JSON.stringify({
+          username: data.login.user.username,
+          email: data.login.user.email,
+          loggedIn: true,
+          id: data.login.user.id,
+        })
+      );
+      navigate('/home');
+    } catch (err) {
+      console.log(err);
+      setErrorProps({
+        open: true,
+        message: `Well, this is embarrassing... There was an issue signing you in. Please try again later.`,
+      });
+    }
+
+    // API.login({ email, password })
+    //   .then((res) => {
+    //     if (res.statusCode === 401) {
+    //       setErrorProps({
+    //         open: true,
+    //         message: 'Incorrect email or password',
+    //       });
+    //       return;
+    //     }
+
+    //     if (res.statusCode === 404) {
+    //       setErrorProps({
+    //         open: true,
+    //         message:
+    //           'No user with that email address found. Click on Just Tech News to sign up',
+    //       });
+    //       return;
+    //     }
+
+    //     userDispatch({
+    //       type: 'setCurrentUser',
+    //       payload: {
+    //         username: res.data.user.username,
+    //         email: res.data.user.email,
+    //         loggedIn: true,
+    //         id: res.data.user.id,
+    //       },
+    //     });
+
+    //     sessionStorage.setItem(
+    //       'user',
+    //       JSON.stringify({
+    //         username: res.data.user.username,
+    //         email: res.data.user.email,
+    //         loggedIn: true,
+    //         id: res.data.user.id,
+    //       })
+    //     );
+    //     navigate('/home');
+    //   })
+    //   .catch((err) => {
+    //     if (err) {
+    //       console.log(err);
+    //       setErrorProps({
+    //         open: true,
+    //         message: `Well, this is embarrassing... There was an issue signing you in. Please try again later.`,
+    //       });
+    //     }
+    //   });
   };
 
   return (
