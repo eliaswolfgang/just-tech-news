@@ -107,7 +107,9 @@ export const createNewComment = gql`
       id
       post_id
       updatedAt
-      user_id
+      user {
+        username
+      }
     }
   }
 `;
