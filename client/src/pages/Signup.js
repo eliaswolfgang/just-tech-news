@@ -1,7 +1,9 @@
 import { useState, useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../utils/UserContext';
-import API from '../utils/API';
+// import API from '../utils/API';
+import { useMutation } from '@apollo/client';
+import { createNewUser } from '../utils/mutations';
 import {
   Box,
   FormGroup,
@@ -19,7 +21,7 @@ export const Signup = () => {
     password: '',
     confirmPassword: '',
   };
-
+  const [createUser] = useMutation(createNewUser);
   const formReducer = (state, action) => {
     switch (action.type) {
       case 'update':
@@ -53,39 +55,42 @@ export const Signup = () => {
       return;
     }
 
-    API.createUser(state)
-      .then((res) => {
-        userDispatch({
-          type: 'setCurrentUser',
-          payload: {
-            username: res.data.username,
-            id: res.data.id,
-            email: res.data.email,
-            loggedIn: true,
-          },
-        });
-        sessionStorage.setItem(
-          'user',
-          JSON.stringify({
-            id: res.data.id,
-            username: res.data.username,
-            email: res.data.email,
-            loggedIn: true,
-          })
-        );
-        navigate('/home');
-      })
-      .catch((err) => {
-        if (err) {
-          console.log(err);
-          setErrorProps({
-            open: true,
-            message: `${err.message}`,
-          });
-        }
+    try {
+      const { data } = await createUser({
+        variables: {
+          username: state.username,
+          email: state.email,
+          password: state.password,
+        },
       });
-  };
+      userDispatch({
+        type: 'setCurrentUser',
+        payload: {
+          username: data.createUser.username,
+          email: data.createUser.email,
+          loggedIn: true,
+          id: data.createUser.id,
+        },
+      });
 
+      sessionStorage.setItem(
+        'user',
+        JSON.stringify({
+          username: data.createUser.username,
+          email: data.createUser.email,
+          loggedIn: true,
+          id: data.createUser.id,
+        })
+      );
+      navigate('/home');
+    } catch (err) {
+      console.log(err);
+      setErrorProps({
+        open: true,
+        message: `Well, this is embarrassing... There was an issue signing you up. Please try again later.`,
+      });
+    }
+  };
   const [state, dispatch] = useReducer(formReducer, initialSignUpState);
   const [submitted, setSubmitted] = useState(false);
   const [errorProps, setErrorProps] = useState({

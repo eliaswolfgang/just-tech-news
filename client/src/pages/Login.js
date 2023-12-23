@@ -154,6 +154,7 @@ export const Login = () => {
             </FormControl>
           </FormGroup>
           <Button type='submit'>Log in</Button>
+          <Button onClick={() => navigate('/')}>Back to Sign Up</Button>
         </Box>
       </Container>
       <ErrorToast props={errorProps} />

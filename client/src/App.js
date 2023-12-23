@@ -11,6 +11,7 @@ import { PostsProvider } from './utils/PostsContext';
 import Signup from './pages/Signup';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
+import UserPosts from './pages/UserPosts';
 
 // Construct our main GraphQL API endpoint
 const httpLink = createHttpLink({
@@ -34,6 +35,7 @@ function App() {
               <Route path='/' element={<Signup />} />
               <Route path='/login' element={<Login />} />
               <Route path='/home' element={<Landing />} />
+              <Route path='/posts/:username' element={<UserPosts />} />
             </Routes>
           </Router>
         </PostsProvider>

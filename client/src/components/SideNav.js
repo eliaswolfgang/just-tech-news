@@ -10,7 +10,7 @@ import { useUserContext } from '../utils/UserContext';
 
 export const SideNav = ({ onClose }) => {
   const { state } = useUserContext();
-  const { user } = state[0] ?? {};
+  const { user } = state ?? {};
   const username = user ? user.username : '';
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export const SideNav = ({ onClose }) => {
   const handleNav = (navigation) => {
     navigate(navigation);
     onClose();
-  }
+  };
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -43,7 +43,12 @@ export const SideNav = ({ onClose }) => {
           { name: 'All Posts', nav: '/home' },
           { name: 'My Posts', nav: `/posts/${username}` },
         ].map((value, index) => (
-          <ListItem link key={index} onClick={() => handleNav(value.nav)}>
+          <ListItem
+            link='true'
+            style={{ cursor: 'pointer' }}
+            key={index}
+            onClick={() => handleNav(value.nav)}
+          >
             <ListItemText primary={value.name} />
           </ListItem>
         ))}
@@ -58,7 +63,7 @@ export const SideNav = ({ onClose }) => {
       open={open}
       onClose={onClose}
       PaperProps={{
-        sx: { width: "25%" },
+        sx: { width: '25%' },
       }}
     >
       {list()}
