@@ -61,6 +61,7 @@ export const getAllPosts = gql`
       createdAt
       votes {
         id
+        user_id
       }
       user {
         id
@@ -69,6 +70,7 @@ export const getAllPosts = gql`
       comments {
         comment_text
         id
+        user_id
         post_id
         user {
           username

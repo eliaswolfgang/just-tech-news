@@ -123,7 +123,7 @@ const resolvers = {
               order: [['createdAt', 'DESC']],
               include: {
                 model: User,
-                attributes: ['username'],
+                attributes: ['username, id'],
               },
             },
             {

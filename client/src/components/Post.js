@@ -18,6 +18,7 @@ import ErrorToast from './ErrorToast';
 import { useMutation } from '@apollo/client';
 import { createNewComment, upvotePost } from '../utils/mutations';
 import { getAllPosts } from '../utils/queries';
+import { FilledInput } from '@mui/material';
 
 export const Post = ({ post, refresh, setRefresh }) => {
   const {
@@ -29,6 +30,7 @@ export const Post = ({ post, refresh, setRefresh }) => {
   const [error, setError] = useState({ show: false, message: '' });
   const [createComment] = useMutation(createNewComment);
   const [upvote] = useMutation(upvotePost);
+
   const submitComment = async () => {
     if (!commentMode[post.id].comment) return;
     try {
@@ -99,11 +101,25 @@ export const Post = ({ post, refresh, setRefresh }) => {
           <Divider style={{ paddingTop: '2rem' }} />
           <CardActions disableSpacing>
             <IconButton aria-label='like' onClick={submitUpvote}>
-              <FavoriteIcon />
+              <FavoriteIcon
+                color={
+                  post.votes?.some((vote) => vote.user_id === user.id)
+                    ? 'primary'
+                    : ''
+                }
+              />
             </IconButton>
             {!!post.votes?.length && (
-              <Typography variant='body2' color='text.secondary'>
-                {post.votes.length} {post.votes.length === 1 ? 'like' : 'likes'}
+              <Typography
+                variant='body2'
+                color={
+                  post.votes?.some((vote) => vote.user_id === user.id)
+                    ? 'primary'
+                    : 'secondary'
+                }
+              >
+                {post.votes?.length}{' '}
+                {post.votes?.length === 1 ? 'like' : 'likes'}
               </Typography>
             )}
             <IconButton
@@ -115,12 +131,25 @@ export const Post = ({ post, refresh, setRefresh }) => {
                 }))
               }
             >
-              <QuestionAnswerIcon />
+              <QuestionAnswerIcon
+                color={
+                  post.comments?.some((comment) => comment.user_id === user.id)
+                    ? 'primary'
+                    : ''
+                }
+              />
             </IconButton>
             {!!post.comments?.length && (
-              <Typography variant='body2' color='text.secondary'>
-                {post.comments.length}{' '}
-                {post.comments.length === 1 ? 'comment' : 'comments'}
+              <Typography
+                variant='body2'
+                color={
+                  post.comments?.some((comment) => comment.user_id === user.id)
+                    ? 'primary'
+                    : ''
+                }
+              >
+                {post.comments?.length}{' '}
+                {post.comments?.length === 1 ? 'comment' : 'comments'}
               </Typography>
             )}
           </CardActions>
@@ -131,15 +160,21 @@ export const Post = ({ post, refresh, setRefresh }) => {
               post.comments.map((comment) => (
                 <React.Fragment key={comment.id}>
                   <Box style={{ marginBottom: '1.5rem' }}>
-                    <TextField
+                    <FilledInput
                       fullWidth
+                      disableUnderline={true}
                       value={comment.comment_text}
                       disabled
                     />
                     <Typography
                       variant='body3'
-                      color='text.secondary'
-                      style={{ float: 'right' }}
+                      color='text.primary'
+                      style={{
+                        float: 'right',
+                        opacity: '0.6',
+                        padding: '0.2rem',
+                        margin: '0.2rem',
+                      }}
                     >
                       Commented by {comment.user?.username} on{' '}
                       {DateFilter(comment.createdAt)}
