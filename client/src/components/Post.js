@@ -115,7 +115,7 @@ export const Post = ({ post, refresh, setRefresh }) => {
                 color={
                   post.votes?.some((vote) => vote.user_id === user.id)
                     ? 'primary'
-                    : 'secondary'
+                    : ''
                 }
               >
                 {post.votes?.length}{' '}
