@@ -3,8 +3,9 @@ FROM mysql:8.0
 
 # Set environment variables for MySQL root password and database
 # Replace 'your_root_password' and 'your_database_name' with your desired values
-ENV MYSQL_ROOT_PASSWORD=IVmysql123!
+ENV MYSQL_PASSWORD=IVmysql123!
 ENV MYSQL_DATABASE=just_tech_news_db
+ENV MYSQL_USER=ivonfange
 
 # Optional: Copy SQL initialization scripts into the container
 # MySQL will automatically execute .sql files placed in /docker-entrypoint-initdb.d/
