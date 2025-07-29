@@ -9,7 +9,7 @@ ENV MYSQL_DATABASE=just_tech_news_db
 # Optional: Copy SQL initialization scripts into the container
 # MySQL will automatically execute .sql files placed in /docker-entrypoint-initdb.d/
 # For example, create a 'initdb' directory in your project and place your .sql files there
-COPY initdb/ /docker-entrypoint-initdb.d/
+# COPY initdb/ /docker-entrypoint-initdb.d/
 
 # Expose the default MySQL port
 EXPOSE 3306
